@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	var filePath, scheduleID string
+	var filePath string
 
 	// deleteCmd represents the delete command
 	var deleteCmd = &cobra.Command{
@@ -61,9 +61,8 @@ to quickly create a Cobra application.`,
 		},
 	}
 
-	deleteCmd.Flags().StringVarP(&scheduleID, "schedule-id", "", "", "Schedule to look for overrides in")
 	deleteCmd.Flags().StringVarP(&filePath, "file-path", "", "", "File path with the list of override IDs to delete")
-	deleteCmd.MarkFlagsRequiredTogether("schedule-id", "file-path")
+	deleteCmd.MarkFlagsRequiredTogether("file-path")
 
 	rootCmd.AddCommand(deleteCmd)
 }
