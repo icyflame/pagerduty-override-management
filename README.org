@@ -33,6 +33,97 @@ The CLI tool's documentation can be found using =./pd-overrides help command=.
   Use "pagerduty-override-management [command] --help" for more information about a command.
 #+end_src
 
+* Concept
+
+PagerDuty scheduling has some useful features. However, the granularity of scheduling does not go
+beyond 1 week. So, it is possible to have 3 days where no one is on-call in 1 week; but it is not
+possible to have 3 weeks where no one is on-call in one month.
+
+I wanted to create a schedule in which someone is on-call only once every 3 weeks. However, there
+are less than 4 people in that schedule. It is not possible to implement this kind of scheduling
+mechanism with PagerDuty's native features. This CLI is an attempt to provide flexibility in
+schedule creation which is not limited by PagerDuty's offerings. (During the 3 weeks where no one is
+on-call, an escalation policy is configured to send the alert to another schedule which always has
+someone on-call.)
+
+* Example Usage
+
+#+begin_src sh
+  # Export authorization token into the environment
+  export AUTHORIZATION_TOKEN=...
+
+  # Build the CLI tool
+  go build -o pd-overrides ./main.go
+
+  # List upcoming overrides in a schedule
+  ./pd-overrides list --schedule-id 'ABCDEF' --from "2022-08-22" --to "2022-09-21"
+  2022-09-05T06:00:00-07:00        ->     2022-09-05T14:00:00-07:00       OVERRIDE-ID-1  Max
+  2022-09-06T10:00:00-07:00        ->     2022-09-06T14:00:00-07:00       OVERRIDE-ID-2  Bob
+  2022-09-07T10:00:00-07:00        ->     2022-09-07T14:00:00-07:00       OVERRIDE-ID-3  Charles
+  2022-09-08T10:00:00-07:00        ->     2022-09-08T14:00:00-07:00       OVERRIDE-ID-4  Bob
+  2022-09-09T10:00:00-07:00        ->     2022-09-09T14:00:00-07:00       OVERRIDE-ID-5  Bob
+
+  # Create overrides (1 week out of every 4 weeks by user-id-1)
+  # Dry-run
+  $ ./pd-overrides create \
+	  --from "2022-08-22T10:00:00+09:00" \
+	  --to "2022-08-25T00:00:00+09:00" \
+	  --shift-length "12h" \
+	  --shift-days 7 \
+	  --gap-days 21 \
+	  --user-id "user-id-1" \
+	  --schedule-id "schedule-id-1" \
+	  --dry-run
+  2022-08-22T10:00:00+09:00        ->     2022-08-22T22:00:00+09:00       DRY-RUN
+  2022-08-23T10:00:00+09:00        ->     2022-08-23T22:00:00+09:00       DRY-RUN
+  2022-08-24T10:00:00+09:00        ->     2022-08-24T22:00:00+09:00       DRY-RUN
+  2022-08-25T10:00:00+09:00        ->     2022-08-25T22:00:00+09:00       DRY-RUN
+  2022-08-26T10:00:00+09:00        ->     2022-08-26T22:00:00+09:00       DRY-RUN
+  2022-08-27T10:00:00+09:00        ->     2022-08-27T22:00:00+09:00       DRY-RUN
+  2022-08-28T10:00:00+09:00        ->     2022-08-28T22:00:00+09:00       DRY-RUN
+
+  # Create overrides (1 week out of every 4 weeks by user-id-1)
+  # Dry-run
+  $ ./pd-overrides create \
+	  --from "2022-08-22T10:00:00+09:00" \
+	  --to "2022-08-25T00:00:00+09:00" \
+	  --shift-length "12h" \
+	  --shift-days 7 \
+	  --gap-days 21 \
+	  --user-id "user-id-1" \
+	  --schedule-id "schedule-id-1" \
+	  --dry-run
+  2022-08-22T10:00:00+09:00        ->     2022-08-22T22:00:00+09:00       OVERRIDE-ID-1  Bob
+  2022-08-23T10:00:00+09:00        ->     2022-08-23T22:00:00+09:00       OVERRIDE-ID-2  Bob
+  2022-08-24T10:00:00+09:00        ->     2022-08-24T22:00:00+09:00       OVERRIDE-ID-3  Bob
+  2022-08-25T10:00:00+09:00        ->     2022-08-25T22:00:00+09:00       OVERRIDE-ID-4  Bob
+  2022-08-26T10:00:00+09:00        ->     2022-08-26T22:00:00+09:00       OVERRIDE-ID-5  Bob
+  2022-08-27T10:00:00+09:00        ->     2022-08-27T22:00:00+09:00       OVERRIDE-ID-6  Bob
+  2022-08-28T10:00:00+09:00        ->     2022-08-28T22:00:00+09:00       OVERRIDE-ID-7  Bob
+
+  # Delete overrides
+  # Put the override IDs that you want to delete in a file and pass it to this CLI file
+  $ cat overrides-to-delete
+  OVERRIDE-ID-1
+  OVERRIDE-ID-2
+  OVERRIDE-ID-3
+  OVERRIDE-ID-4
+  Non-existent-1
+  OVERRIDE-ID-5
+  OVERRIDE-ID-6
+  OVERRIDE-ID-7
+
+  $ ./pd-overrides delete --file-path overrides-to-delete --schedule-id PU3N3E4
+  OVERRIDE-ID-1	DELETED
+  OVERRIDE-ID-2	DELETED
+  OVERRIDE-ID-3	DELETED
+  OVERRIDE-ID-4	DELETED
+  Non-existent-1  HTTP response failed with status code 404, message: Override Not Found (code: 4004)
+  OVERRIDE-ID-5	DELETED
+  OVERRIDE-ID-6	DELETED
+  OVERRIDE-ID-7	DELETED
+#+end_src
+
 * How to Use
 
 Clone this repository and build it locally. The code in this repository has been tested with go
