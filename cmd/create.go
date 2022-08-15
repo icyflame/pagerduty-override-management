@@ -77,7 +77,7 @@ Overrides are created using the following rules:
 					if dryRun {
 						output = append(output, "DRY-RUN")
 					} else {
-						output = append(output, cs.Shift.ID)
+						output = append(output, cs.Shift.ID, cs.Shift.User.Summary)
 					}
 				}
 				fmt.Println(strings.Join(output, "\t"))

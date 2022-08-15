@@ -37,7 +37,7 @@ func init() {
 					override.Start,
 					" -> ",
 					override.End,
-					": ",
+					override.ID,
 					override.User.Summary,
 				}, "\t"))
 			}

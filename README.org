@@ -1,7 +1,8 @@
 #+TITLE: Pagerduty Override Management
 
 #+begin_quote
-This is a command line tool which can add and remove overrides on Pagerduty.
+This is a command line tool which can view, create, and delete Pagerduty overrides
+using the Pagerduty API.
 #+end_quote
 
 * Authorization
