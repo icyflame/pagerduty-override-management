@@ -33,6 +33,15 @@ The CLI tool's documentation can be found using =./pd-overrides help command=.
   Use "pagerduty-override-management [command] --help" for more information about a command.
 #+end_src
 
+* How to Use
+
+Clone this repository and build it locally. The code in this repository has been tested with go
+1.18.3.
+
+#+begin_src sh
+  go build -o pd-overrides ./main.go
+#+end_src
+
 * Authorization
 
 This CLI tool can be used using any kind of API key which is issued by PagerDuty.
