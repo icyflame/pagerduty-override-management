@@ -1,5 +1,16 @@
 #+TITLE: Pagerduty Override Management
 
 #+begin_quote
-This is a Golang command line tool which can add and remove overrides on Pagerduty.
+This is a command line tool which can add and remove overrides on Pagerduty.
 #+end_quote
+
+* Authorization
+
+This CLI tool can be used using any kind of API key which is issued by PagerDuty.
+
+- If a user has the ability to view, create, and delete overrides from a schedule, then [[https://support.pagerduty.com/docs/api-access-keys#section-generate-a-user-token-rest-api-key][a User Token
+  REST API key]] can be used.
+- If the user does not have this ability but is an account administrator or account owner, then a
+  [[https://support.pagerduty.com/docs/api-access-keys#section-generate-a-general-access-rest-api-key][General access REST API key]] can be used.
+
+The token must be provided in the =AUTHORIZATION_TOKEN= environment variable.
