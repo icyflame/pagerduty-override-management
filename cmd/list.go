@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/icyflame/pagerduty-override-management/internal/pagerduty"
@@ -15,7 +16,6 @@ import (
 func init() {
 	var from, to, scheduleID string
 
-	// listCmd represents the list command
 	var listCmd = &cobra.Command{
 		Use:   "list",
 		Short: "List overrides between the from and to timestamp provided to this command as arguments",
@@ -30,14 +30,24 @@ func init() {
 				fmt.Printf("could not parse 'to' time: %s; error: %v", to, err)
 				return
 			}
-			fmt.Println(pagerduty.ListOverrides(fromTime, toTime, scheduleID))
+
+			overrides := pagerduty.ListOverrides(fromTime, toTime, scheduleID)
+			for _, override := range overrides {
+				fmt.Println(strings.Join([]string{
+					override.Start,
+					" -> ",
+					override.End,
+					": ",
+					override.User.Summary,
+				}, "\t"))
+			}
 		},
 	}
 
 	rootCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&from, "from", "", "", "Oldest time for searching overrides")
-	listCmd.Flags().StringVarP(&to, "to", "", "", "Newest time for searching overrides")
-	listCmd.Flags().StringVarP(&scheduleID, "schedule-id", "", "", "Schedule ID in which to look for overrides")
+	listCmd.Flags().StringVarP(&from, "from", "", "", "Start time for listing overrides")
+	listCmd.Flags().StringVarP(&to, "to", "", "", "End time for listing overrides")
+	listCmd.Flags().StringVarP(&scheduleID, "schedule-id", "", "", "Schedule to look for overrides in")
 	listCmd.MarkFlagsRequiredTogether("from", "to", "schedule-id")
 }
