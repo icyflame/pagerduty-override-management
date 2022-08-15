@@ -5,6 +5,34 @@ This is a command line tool which can view, create, and delete Pagerduty overrid
 using the Pagerduty API.
 #+end_quote
 
+The CLI tool's documentation can be found using =./pd-overrides help command=.
+
+#+begin_src sh
+  This CLI tool can be used to list and delete pagerduty overrides.
+
+  It can also be used to create overrides based on a given pattern.
+
+  For e.g., if you want to create a schedule which has an override for a given user on
+  1 week out of every 4 weeks, then it can be done through overrides. PagerDuty does not
+  natively support this feature currently.
+
+  Usage:
+	pagerduty-override-management [command]
+
+  Available Commands:
+	completion  Generate the autocompletion script for the specified shell
+	create      Create overrides in the given schedule
+	delete      A brief description of your command
+	help        Help about any command
+	list        List overrides between the from and to timestamp provided to this command as arguments
+
+  Flags:
+	-h, --help     help for pagerduty-override-management
+	-t, --toggle   Help message for toggle
+
+  Use "pagerduty-override-management [command] --help" for more information about a command.
+#+end_src
+
 * Authorization
 
 This CLI tool can be used using any kind of API key which is issued by PagerDuty.
