@@ -61,3 +61,8 @@ func CreateOverrides(shifts []ShiftTimings, userID, scheduleID string, dryRun bo
 	}
 	return output
 }
+
+// DeleteOverride ...
+func DeleteOverride(scheduleID, overrideID string) error {
+	return cli.DeleteOverrideWithContext(context.Background(), scheduleID, overrideID)
+}
