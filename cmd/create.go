@@ -85,8 +85,6 @@ Overrides are created using the following rules:
 		},
 	}
 
-	rootCmd.AddCommand(createCmd)
-
 	createCmd.Flags().StringVarP(&userID, "user-id", "", "", "User who will take these overrides")
 	createCmd.Flags().StringVarP(&scheduleID, "schedule-id", "", "", "Schedule where the overrides should be created")
 	createCmd.Flags().StringVarP(&from, "from", "", "", "From time to start creating overrides")
@@ -96,4 +94,6 @@ Overrides are created using the following rules:
 	createCmd.Flags().IntVarP(&gapDays, "gap-days", "", 0, "Gap between the set of days for each shift")
 	createCmd.MarkFlagsRequiredTogether("from", "to", "shift-length", "shift-days", "gap-days", "user-id", "schedule-id")
 	createCmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, "Run this script without creating anything on PagerDuty")
+
+	rootCmd.AddCommand(createCmd)
 }

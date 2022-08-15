@@ -44,10 +44,10 @@ func init() {
 		},
 	}
 
-	rootCmd.AddCommand(listCmd)
-
 	listCmd.Flags().StringVarP(&from, "from", "", "", "Start time for listing overrides")
 	listCmd.Flags().StringVarP(&to, "to", "", "", "End time for listing overrides")
 	listCmd.Flags().StringVarP(&scheduleID, "schedule-id", "", "", "Schedule to look for overrides in")
 	listCmd.MarkFlagsRequiredTogether("from", "to", "schedule-id")
+
+	rootCmd.AddCommand(listCmd)
 }
